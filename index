@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مولد روابط VTT</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            direction: rtl;
+            text-align: right;
+            margin: 20px;
+        }
+        label, input {
+            font-size: 18px;
+            margin: 10px 0;
+        }
+        input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        textarea {
+            width: 100%;
+            height: 300px;
+            font-size: 16px;
+            margin-top: 20px;
+            padding: 10px;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <h1>مولد روابط VTT</h1>
+    <label for="base-url">الرابط الأساسي:</label>
+    <input type="text" id="base-url" placeholder="أدخل الرابط الأساسي هنا">
+    
+    <label for="count">عدد الروابط:</label>
+    <input type="number" id="count" placeholder="أدخل عدد الروابط المطلوب">
+    
+    <button onclick="generateLinks()">توليد الروابط</button>
+    
+    <textarea id="generated-links" readonly placeholder="الروابط ستظهر هنا"></textarea>
+    
+    <button onclick="copyLinks()">نسخ الروابط</button>
+    <button onclick="downloadLinks()">تحميل الروابط</button>
+    
+    <script>
+        function generateLinks() {
+            const baseUrl = document.getElementById('base-url').value;
+            const count = parseInt(document.getElementById('count').value);
+            const output = document.getElementById('generated-links');
+            output.value = ""; // تفريغ النص السابق
+            
+            if (!baseUrl || isNaN(count) || count <= 0) {
+                alert("يرجى إدخال الرابط الصحيح وعدد الروابط.");
+                return;
+            }
+            
+            const baseParts = baseUrl.split("/");
+            let baseIndex = parseInt(baseParts[baseParts.length - 1].split(".")[0]);
+
+            for (let i = 0; i < count; i++) {
+                // توليد الرابط بدون أصفار في البداية
+                const link = `${baseParts.slice(0, -1).join("/")}/${baseIndex}.vtt${baseUrl.split(".vtt")[1]}`;
+                output.value += link + "\n";
+                baseIndex++;
+            }
+        }
+
+        function copyLinks() {
+            const textarea = document.getElementById('generated-links');
+            textarea.select();
+            textarea.setSelectionRange(0, 99999); // للأجهزة المحمولة
+            document.execCommand('copy');
+            alert("تم نسخ الروابط بنجاح!");
+        }
+
+        function downloadLinks() {
+            const links = document.getElementById('generated-links').value.split("\n").filter(link => link);
+            links.forEach(link => {
+                window.open(link, '_blank');
+            });
+        }
+    </script>
+</body>
+</html>
